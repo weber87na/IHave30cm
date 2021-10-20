@@ -12,12 +12,28 @@ namespace IHave30cm
 {
     public partial class FormRuler : Form
     {
+        Font midFont;
         public FormRuler()
         {
             InitializeComponent( );
             //this.FormBorderStyle = FormBorderStyle.None;
             this.DoubleBuffered = true;
             this.SetStyle( ControlStyles.ResizeRedraw, true );
+            CreateContextMenu( this );
+
+            midFont = new Font( Font.FontFamily, Font.Size / 2 );
+        }
+
+        //建立離開選單
+        private void CreateContextMenu(Control control)
+        {
+            ContextMenu contextMenu = new ContextMenu( );
+            contextMenu.MenuItems.Add( new MenuItem( "Exit", new EventHandler( Exit) ) );
+            control.ContextMenu = contextMenu;
+        }
+        private void Exit(object sender , EventArgs e)
+        {
+            Environment.Exit( 0 );
         }
         protected override void OnPaint(PaintEventArgs e) // you can safely omit this method if you want
         {
@@ -30,28 +46,53 @@ namespace IHave30cm
             //1 cm = 10mm
             //驗證工具
             //https://www.ginifab.com.tw/tools/measurement/online_real_size_scale_ruler.html
-            g.PageUnit = GraphicsUnit.Millimeter;
+            g.PageUnit = GraphicsUnit.Pixel;
 
             Pen p = new Pen( Brushes.Black );
             p.Width = 0.5f;
 
             //橫的
-            g.DrawLine(p, 0, 0, 10.CM(), 0 );
+            g.DrawLine(p, 0, 0, 100.Unit(), 0 );
 
 
             //刻度
-            for(int i = 1; i <= 30 ; i ++)
+            for(int i = 1; i <= 300 ; i ++)
             {
-                g.DrawLine(p, 
-                    i.CM(), 0, 
-                    i.CM(), 1.CM() / 2 );
+                if( i % 10 == 0)
+                {
+                    //每 100px 畫最大格
+                    g.DrawLine( p,
+                        i.Unit( ), 0,
+                        i.Unit( ), 1.Unit( ) * 2);
 
-                //取得文字大小
-                var textSize = g.MeasureString( i.ToString( ), Font );
-                //繪製文字
-                g.DrawString( i.ToString( ), Font, Brushes.Black,
-                    i.CM( ) - textSize.Width / 2 , 1.CM( ) / 2
-                    );
+                    //取得文字大小
+                    var textSize = g.MeasureString( i.Unit().ToString( ), Font );
+                    //繪製文字
+                    g.DrawString( i.Unit( ).ToString( ), Font, Brushes.Black,
+                        i.Unit( ) - textSize.Width / 2, 1.Unit( ) * 2
+                        );
+                }
+                else if ( i % 5 == 0){
+                    //每 50px 畫中格
+                    g.DrawLine( p,
+                        i.Unit( ), 0,
+                        i.Unit( ), 1.Unit( )  );
+
+                    //取得文字大小
+                    var textSize = g.MeasureString( i.Unit().ToString( ), midFont );
+                    //繪製文字
+                    g.DrawString( i.Unit( ).ToString( ), midFont, Brushes.Black,
+                        i.Unit( ) - textSize.Width / 2, 1.Unit( ) * 2
+                        );
+                }
+                else
+                {
+                    //正常狀態
+                    g.DrawLine( p,
+                        i.Unit( ), 0,
+                        i.Unit( ), 1.Unit( ) / 2 );
+                }
+
             }
         }
 

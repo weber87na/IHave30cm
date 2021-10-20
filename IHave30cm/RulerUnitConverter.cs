@@ -11,13 +11,11 @@ using System.Windows.Forms;
 namespace IHave30cm
 {
 
-    //讓 CM 計算好看點
-    //Millimeter = mm
-    //1 cm = 10mm
+    //因為 1 px 太小了 , 每隔 10 px 當一個單位
     public static class RulerUnitConverter
     {
-        public static int CM(this int mm){
-            return mm * 10;
+        public static int Unit(this int px){
+            return px * 10;
         }
     }
 }
